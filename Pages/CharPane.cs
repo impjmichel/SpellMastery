@@ -35,7 +35,14 @@ public class CharPane : SpellBookPage
 	{
 		UILabel label = gameObject.transform.FindChild("CP_Title").GetComponent<UILabel>();
 		label.text = storage.SelectedCharInfo();
+		UpdateRankLabel();
 		UpdateLabels();
+	}
+
+	private void UpdateRankLabel()
+	{
+		UILabel label = gameObject.transform.FindChild("CP_Label_Ranks").GetComponent<UILabel>();
+		label.text = storage.SelectedCharRanksString();
 	}
 
 	private void UpdateLabels()

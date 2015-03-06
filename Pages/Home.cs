@@ -20,7 +20,6 @@ public class Home : SpellBookPage
 
 	public void OnClick_Reset()
 	{
-		PlayerPrefs.DeleteAll();
-		storage.ResetCharacterList();
+		storage.ResetEverything(false);
 	}
 }

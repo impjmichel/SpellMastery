@@ -42,9 +42,17 @@ public class PrepareSpellsSingleRank : SpellBookPage
 
 	private void UpdateLabels()
 	{
-		UILabel label = gameObject.transform.FindChild("PSSR_prepared").GetComponent<UILabel>();
-		label.text = storage.SelectedCharNumbers(false, storage.selectedRank);
-		label = gameObject.transform.FindChild("PSSR_available").GetComponent<UILabel>();
-		label.text = storage.SelectedCharNumbers(true, storage.selectedRank);
+		UILabel prepared = gameObject.transform.FindChild("PSSR_prepared").GetComponent<UILabel>();
+		UILabel available = gameObject.transform.FindChild("PSSR_available").GetComponent<UILabel>();
+		if (storage.selectedRankMain)
+		{
+			prepared.text = storage.SelectedCharNumbers(false, storage.selectedRank);
+			available.text = storage.SelectedCharNumbers(true, storage.selectedRank);
+		}
+		else
+		{
+			prepared.text = storage.SelectedCharExtraSpell(false, storage.selectedRank);
+			available.text = storage.SelectedCharExtraSpell(true, storage.selectedRank);
+		}
 	}
 }

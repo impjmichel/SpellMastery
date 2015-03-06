@@ -44,6 +44,26 @@ public class SpellList : MonoBehaviour
 		return result;
 	}
 
+	public IEnumerator GetOnlineList()
+	{
+		WWW www = new WWW(cOnlinePath);
+		yield return www;
+
+		if (string.IsNullOrEmpty(www.error))
+		{
+			string data = www.text;
+			if (!string.IsNullOrEmpty(data))
+			{
+				DeserializeData(data);
+			}
+		}
+		else
+		{
+			Debug.Log(www.error);
+			GetOfflineList();
+		}
+	}
+
 	private List<Spell> GetDomainSpells(ClericDomain domain)
 	{
 		List<Spell> result = mSpellList.FindAll(
@@ -64,7 +84,6 @@ public class SpellList : MonoBehaviour
 		return result;
 	}
 
-
 	private void Start()
 	{
 		path = Application.persistentDataPath;
@@ -74,6 +93,7 @@ public class SpellList : MonoBehaviour
 	private void WriteList()
 	{
 		string data = "{\"spells\":[" + "\n";
+		mSpellList.Sort();
 		for (int i = 0; i < mSpellList.Count; ++i)
 		{
 			data += mSpellList[i].Serialize().ToString();
@@ -89,26 +109,6 @@ public class SpellList : MonoBehaviour
 			StreamWriter writer = new StreamWriter(stream);
 			writer.Write(data);
 			writer.Dispose();
-		}
-	}
-
-	private IEnumerator GetOnlineList()
-	{
-		WWW www = new WWW(cOnlinePath);
-		yield return www;
-		
-		if (string.IsNullOrEmpty(www.error))
-		{
-			string data = www.text;
-			if (!string.IsNullOrEmpty(data))
-			{
-				DeserializeData(data);
-			}
-		}
-		else
-		{
-			Debug.Log(www.error);
-			GetOfflineList();
 		}
 	}
 

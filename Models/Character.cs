@@ -177,7 +177,7 @@ public class Character
 
 	public int CastableRanks()
 	{
-		if (mCClass == CharClassEnum.Wizard || mCClass == CharClassEnum.Cleric)
+		if (mCClass == CharClassEnum.Wizard || mCClass == CharClassEnum.Cleric || mCClass == CharClassEnum.Druid)
 		{
 			for (int i = 0; i < 10; ++i)
 			{
@@ -187,7 +187,35 @@ public class Character
 				}
 			}
 		}
+		else if (mCClass == CharClassEnum.Ranger || mCClass == CharClassEnum.Paladin)
+		{
+			int adjustment = 1; // needed to keep the arrays at the right size  :'(
+			if (mLevel == 4)
+			{
+				return 1 + adjustment;
+			}
+			else if (mLevel >= 14)
+			{
+				return 4 + adjustment;
+			}
+			return ((mLevel - 2) / 3) + adjustment;
+		}
 		return 10;
+	}
+
+	public string RanksString()
+	{
+		string result = "";
+		int startRank = 0;
+		if (mCClass == CharClassEnum.Ranger || mCClass == CharClassEnum.Paladin)
+		{ // can't cast rank 0 spells
+			startRank = 1;
+		}
+		for (int i = startRank; i < CastableRanks(); ++i)
+		{
+			result += i + "\n";
+		}
+		return result;
 	}
 
 	public void ResetSpells()
@@ -214,7 +242,10 @@ public class Character
 			List<KeyValuePair<Spell, bool>> readyExtra = new List<KeyValuePair<Spell, bool>>();
 			foreach (KeyValuePair<Spell, bool> pair in mExtraSpells)
 			{
-				readyExtra.Add(new KeyValuePair<Spell, bool>(pair.Key, false));
+				if (pair.Key != null && !string.IsNullOrEmpty(pair.Key.name))
+				{
+					readyExtra.Add(new KeyValuePair<Spell, bool>(pair.Key, false));
+				}
 			}
 			mExtraSpells = readyExtra;
 		}
@@ -276,12 +307,15 @@ public class Character
 			result += " (INT)";
 			result += "\nSpecialization: " + ((MagicSchool)(mAttributes[0])).ToString();
 		}
-		else if (mCClass == CharClassEnum.Cleric)
+		else
 		{
 			result += " (WIS)";
-			string dom1 = ((ClericDomain)(mAttributes[0])).ToString();
-			string dom2 = ((ClericDomain)(mAttributes[1])).ToString();
-			result += "\nDomain: " + dom1 + "/" + dom2;
+			if (mCClass == CharClassEnum.Cleric)
+			{
+				string dom1 = ((ClericDomain)(mAttributes[0])).ToString();
+				string dom2 = ((ClericDomain)(mAttributes[1])).ToString();
+				result += "\nDomain: " + dom1 + "/" + dom2;
+			}
 		}
 		return result;
 	}

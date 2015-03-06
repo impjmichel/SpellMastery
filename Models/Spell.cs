@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Boomlagoon.JSON;
 
-public class Spell
+public class Spell : IComparable<Spell>
 {
 	private string mName;
 	private MagicSchool mSchool;
@@ -28,6 +29,10 @@ public class Spell
 		get { return mDomains; }
 	}
 
+	public int CompareTo(Spell other)
+	{
+		return mName.CompareTo(other.name);
+	}
 
 	public void InitiateSpell(JSONObject spellObject)
 	{

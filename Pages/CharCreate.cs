@@ -42,7 +42,7 @@ public class CharCreate : SpellBookPage
 		else if (labelText.StartsWith(">"))
 		{
 			// wizard spec
-			WizardSpecHandler(labelText.Substring(1));
+			WizardSpecHandler(labelText.Substring(2));
 		}
 		else if (labelText.StartsWith("1:"))
 		{
@@ -86,7 +86,9 @@ public class CharCreate : SpellBookPage
 
 	private void Reset()
 	{
-		// TODO!
+		nameInput.value = "";
+		ResetNameValue();
+		// TODO: more resetting
 	}
 
 	private void ResetNameValue()
@@ -109,6 +111,18 @@ public class CharCreate : SpellBookPage
 			ClericDomain_1.SetActive(true);
 			ClericDomain_2.SetActive(true);
 			mCharacter.cclass = CharClassEnum.Cleric;
+		}
+		else if (text == CharClassEnum.Druid.ToString())
+		{
+			mCharacter.cclass = CharClassEnum.Druid;
+		}
+		else if (text == CharClassEnum.Paladin.ToString())
+		{
+			mCharacter.cclass = CharClassEnum.Paladin;
+		}
+		else if (text == CharClassEnum.Ranger.ToString())
+		{
+			mCharacter.cclass = CharClassEnum.Ranger;
 		}
 		else if (text == CharClassEnum.Wizard.ToString())
 		{

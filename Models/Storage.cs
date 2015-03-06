@@ -7,7 +7,12 @@ using System.IO;
 
 public class Storage : MonoBehaviour 
 {
+	/// <summary>
+	/// The number for a version control system thing. Only increment will result in a "memory wipe".
+	/// </summary>
+	private const int cVersion = 102; 
 	private const string charFileName = "/char.data";
+
 	private List<Character> mCharacterLsit = new List<Character>();
 	private int mSelectedCharIndex;
 	private int mSelectedRank;
@@ -38,7 +43,7 @@ public class Storage : MonoBehaviour
 
 	private void Start()
 	{
-		PlayerPrefs.DeleteAll();
+		VersionControl();
 		InitCharacters();
 	}
 
@@ -53,36 +58,17 @@ public class Storage : MonoBehaviour
 	public string SelectedCharNumbers(bool used)
 	{
 		string result = "";
-		for (int rank = 0; rank < selectedChar.mainSpells.Count; ++rank)
+		int startRank = 0;
+		if (selectedChar.cclass == CharClassEnum.Paladin || selectedChar.cclass == CharClassEnum.Ranger)
+		{
+			startRank = 1;
+		}
+		for (int rank = startRank; rank < selectedChar.mainSpells.Count; ++rank)
 		{
 			result += SelectedCharNumbers(used, rank);
-			if (SelectedCharHasExtraSpell())
+			if (selectedChar.cclass != CharClassEnum.Cleric || rank >= 1)
 			{
-				if (selectedChar.cclass != CharClassEnum.Cleric || rank >= 1)
-				{
-					if (selectedChar.extraSpells.Count <= rank)
-					{
-						if (used)
-						{
-							result += "+1";
-						}
-						else
-						{
-							result += "+0";
-						}
-					}
-					else
-					{
-						if (selectedChar.extraSpells[rank].Value == used)
-						{
-							result += "+1";
-						}
-						else
-						{
-							result += "+0";
-						}
-					}
-				}
+				result += "+" + SelectedCharExtraSpell(used, rank);
 			}
 			result += "\n";
 		}
@@ -110,6 +96,38 @@ public class Storage : MonoBehaviour
 		return result;
 	}
 
+	public string SelectedCharExtraSpell(bool used, int rank)
+	{
+		string result = "";
+		if (SelectedCharHasExtraSpell())
+		{
+			if (selectedChar.extraSpells.Count <= rank)
+			{
+				if (used)
+				{
+					result += "1";
+				}
+				else
+				{
+					result += "0";
+				}
+			}
+			else
+			{
+				if (selectedChar.extraSpells[rank].Value == used)
+				{
+					result += "1";
+				}
+				else
+				{
+					result += "0";
+				}
+			}
+			
+		}
+		return result;
+	}
+
 	public string SelectedCharInfo()
 	{
 		return selectedChar.Info();
@@ -123,6 +141,11 @@ public class Storage : MonoBehaviour
 	public bool SelectedCharHasExtraSpell()
 	{
 		return selectedChar.HasExtraSpell();
+	}
+
+	public string SelectedCharRanksString()
+	{
+		return selectedChar.RanksString();
 	}
 
 	public void PrepareSpell(Spell spell)
@@ -160,7 +183,6 @@ public class Storage : MonoBehaviour
 	}
 	public void UseExtraSpell(Spell spell, int rank)
 	{
-		Debug.Log("casting spell : " + spell.name + "!");
 		selectedChar.extraSpells[rank] = new KeyValuePair<Spell,bool>(spell, true);
 		WriteCharactersToFile();
 	}
@@ -171,12 +193,25 @@ public class Storage : MonoBehaviour
 		WriteCharactersToFile();
 	}
 
-	public void ResetCharacterList()
+	public void ResetEverything(bool quit)
 	{
+		string[] files = Directory.GetFiles(Application.persistentDataPath);
+		foreach (string file in files)
+		{
+			File.Delete(file);
+		}
+		PlayerPrefs.DeleteAll();
 		mCharacterLsit.Clear();
 		WriteCharactersToFile();
+		if (quit)
+		{
+			Application.Quit();
+		}
+		else
+		{
+			StartCoroutine(spellList.GetOnlineList());
+		}
 	}
-
 
 	private void InitCharacters()
 	{
@@ -202,6 +237,17 @@ public class Storage : MonoBehaviour
 				character.Deserialize(val.Obj);
 				mCharacterLsit.Add(character);
 			}
+		}
+	}
+
+	private void VersionControl()
+	{
+		if (PlayerPrefs.GetInt("version") < cVersion)
+		{
+			// TODO: show message to notify user of incoming reset.
+			ResetEverything(false);
+			PlayerPrefs.SetInt("version", cVersion);
+			Application.Quit();
 		}
 	}
 

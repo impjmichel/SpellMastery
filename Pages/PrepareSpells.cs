@@ -80,27 +80,33 @@ public class PrepareSpells : SpellBookPage
 		}
 	}
 
-	private void CreateRankButton(int row)
+	private void CreateRankButton(int rank)
 	{
+		CharClassEnum cclass = storage.selectedChar.cclass;
+		if (cclass == CharClassEnum.Ranger || cclass == CharClassEnum.Paladin)
+		{ // can't cast rank 0 spells
+			rank++;
+		}
+
 		bool extraSpell = storage.SelectedCharHasExtraSpell();
 		GameObject mainButton = (GameObject)Instantiate(ButtonPrefab);
-		mainButton.GetComponent<RankSelectionButton>().rank = row;
+		mainButton.GetComponent<RankSelectionButton>().rank = rank;
 		mainButton.GetComponent<RankSelectionButton>().main = true;
 		if (extraSpell)
 		{
 			Transform target = table.FindChild("MainButtonGrid");
 			mainButton.transform.parent = target;
-			AnchorObjectToTable(target, mainButton, row);
+			AnchorObjectToTable(target, mainButton, rank);
 
-			CreateExtraRankButton(row);
+			CreateExtraRankButton(rank);
 		}
 		else
 		{
 			mainButton.transform.parent = table;
-			AnchorObjectToTable(table, mainButton, row);
+			AnchorObjectToTable(table, mainButton, rank);
 		}
 		UILabel label = mainButton.transform.FindChild("B_Label").GetComponent<UILabel>();
-		label.text = "Rank:   " + row;
+		label.text = "Rank:   " + rank;
 	}
 
 	private void CreateExtraRankButton(int row)
