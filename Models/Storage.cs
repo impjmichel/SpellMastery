@@ -68,9 +68,12 @@ public class Storage : MonoBehaviour
 		for (int rank = startRank; rank < selectedChar.mainSpells.Count; ++rank)
 		{
 			result += SelectedCharNumbers(used, rank);
-			if (selectedChar.cclass != CharClassEnum.Cleric || rank >= 1)
+			if (SelectedCharHasExtraSpell())
 			{
-				result += "+" + SelectedCharExtraSpell(used, rank);
+				if (selectedChar.cclass != CharClassEnum.Cleric || rank >= 1)
+				{
+					result += "+" + SelectedCharExtraSpell(used, rank);
+				}
 			}
 			result += "\n";
 		}

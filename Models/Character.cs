@@ -240,6 +240,10 @@ public class Character
 		if (HasExtraSpell())
 		{
 			List<KeyValuePair<Spell, bool>> readyExtra = new List<KeyValuePair<Spell, bool>>();
+			if (mCClass == CharClassEnum.Cleric)
+			{
+				readyExtra.Add(new KeyValuePair<Spell, bool>());
+			}
 			foreach (KeyValuePair<Spell, bool> pair in mExtraSpells)
 			{
 				if (pair.Key != null && !string.IsNullOrEmpty(pair.Key.name))
