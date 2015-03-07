@@ -8,14 +8,16 @@ using System.IO;
 public class Storage : MonoBehaviour 
 {
 	/// <summary>
-	/// The number for a version control system thing. Only increment will result in a "memory wipe".
+	/// The number for a version control system thing. Any change results in a "memory wipe".
 	/// </summary>
-	private const int cVersion = 102; 
+	private const string cVersion = "1.0.6"; 
 	private const string charFileName = "/char.data";
 
 	private List<Character> mCharacterLsit = new List<Character>();
 	private int mSelectedCharIndex;
 	private int mSelectedRank;
+
+	public GameObject Popup;
 
 	public List<Character> characterList
 	{
@@ -43,7 +45,7 @@ public class Storage : MonoBehaviour
 
 	private void Start()
 	{
-		VersionControl();
+		StartCoroutine(VersionControl());
 		InitCharacters();
 	}
 
@@ -240,14 +242,32 @@ public class Storage : MonoBehaviour
 		}
 	}
 
-	private void VersionControl()
+	
+
+	public void OnClick_PopupExit()
 	{
-		if (PlayerPrefs.GetInt("version") < cVersion)
+		ResetEverything(true);
+	}
+
+	private IEnumerator VersionControl()
+	{
+		yield return StartCoroutine(spellList.GetOnlineList());
+		if (!string.IsNullOrEmpty(spellList.version))
 		{
-			// TODO: show message to notify user of incoming reset.
-			ResetEverything(false);
-			PlayerPrefs.SetInt("version", cVersion);
-			Application.Quit();
+			OnlineVersionControl(spellList.version);
+		}
+	}
+
+	private void OnlineVersionControl(string version)
+	{
+		if (cVersion != version)
+		{
+			//popup text
+			string text = "[b]SpellMastery\nv" + version + " released![/b]";
+			// show popup
+			UILabel label = Popup.transform.FindChild("Label").GetComponent<UILabel>();
+			label.text = text;
+			Popup.SetActive(true);
 		}
 	}
 

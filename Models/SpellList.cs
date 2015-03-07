@@ -8,13 +8,17 @@ public class SpellList : MonoBehaviour
 {
 	private const string cOnlinePath = "http://impdevelopment.eu/SpellMastery/list.data";
 	private const string cFilename = "/list.data";
-	private string path;
-	private JSONArray spells;
+	private string mPath;
+	private string mVersion;
 	private List<Spell> mSpellList = new List<Spell>();
 	
 	public List<Spell> spellList
 	{
 		get { return mSpellList; }
+	}
+	public string version
+	{
+		get { return mVersion; }
 	}
 
 	public List<Spell> GetSpellsOfClassAndRank(CharClassEnum cclass, int rank)
@@ -86,8 +90,7 @@ public class SpellList : MonoBehaviour
 
 	private void Start()
 	{
-		path = Application.persistentDataPath;
-		StartCoroutine(GetOnlineList());
+		mPath = Application.persistentDataPath;
 	}
 
 	private void WriteList()
@@ -104,7 +107,7 @@ public class SpellList : MonoBehaviour
 		}
 		data += "]}";
 		string filename = "/list.data";
-		using(var stream = File.Create(path+filename))
+		using(var stream = File.Create(mPath+filename))
 		{
 			StreamWriter writer = new StreamWriter(stream);
 			writer.Write(data);
@@ -115,7 +118,7 @@ public class SpellList : MonoBehaviour
 	private void GetOfflineList()
 	{
 		string data = "";
-		using (var stream = File.OpenRead(path + cFilename))
+		using (var stream = File.OpenRead(mPath + cFilename))
 		{
 			StreamReader reader = new StreamReader(stream);
 			data = reader.ReadToEnd();
@@ -130,7 +133,12 @@ public class SpellList : MonoBehaviour
 	private void DeserializeData(string data)
 	{
 		JSONObject obj = JSONObject.Parse(data);
-		spells = obj.GetArray("spells");
+		if (obj.ContainsKey("version"))
+		{
+			mVersion = obj.GetString("version");
+		}
+
+		JSONArray spells = obj.GetArray("spells");
 		foreach (var val in spells)
 		{
 			Spell spell = new Spell();
