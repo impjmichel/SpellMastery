@@ -10,12 +10,13 @@ public class Storage : MonoBehaviour
 	/// <summary>
 	/// The number for a version control system thing. Any change results in a "memory wipe".
 	/// </summary>
-	private const string cVersion = "1.0.6"; 
+	private const string cVersion = "1.1.0"; 
 	private const string charFileName = "/char.data";
 
 	private List<Character> mCharacterLsit = new List<Character>();
 	private int mSelectedCharIndex;
 	private int mSelectedRank;
+	private bool mVersionPopup = false;
 
 	public GameObject Popup;
 
@@ -245,11 +246,16 @@ public class Storage : MonoBehaviour
 		}
 	}
 
-	
-
 	public void OnClick_PopupExit()
 	{
-		ResetEverything(true);
+		if (mVersionPopup)
+		{
+			ResetEverything(true);
+		}
+		else
+		{
+			Popup.SetActive(false);
+		}
 	}
 
 	private IEnumerator VersionControl()
@@ -265,12 +271,15 @@ public class Storage : MonoBehaviour
 	{
 		if (cVersion != version)
 		{
-			//popup text
-			string text = "[b]SpellMastery\nv" + version + " released![/b]";
-			// show popup
-			UILabel label = Popup.transform.FindChild("Label").GetComponent<UILabel>();
-			label.text = text;
-			Popup.SetActive(true);
+			mVersionPopup = true;
+			string header = "[b]SpellMastery\nv" + version + " released![/b]";
+			string sub = "Please download the application again or get in contact with imp for more or less information.";
+			string button = "Exit application";
+			ActivatePopup(header, sub, button);
+		}
+		else
+		{
+			MessageControl();
 		}
 	}
 
@@ -295,5 +304,40 @@ public class Storage : MonoBehaviour
 		}
 		obj.Add("characters", array);
 		return obj;
+	}
+
+	private void MessageControl()
+	{
+		if (spellList.message != null)
+		{
+			string previous1 = PlayerPrefs.GetString("message1");
+			string previous2 = PlayerPrefs.GetString("message2");
+			string previous3 = PlayerPrefs.GetString("message3");
+			List<string> message = spellList.message;
+			if (message.Count == 3)
+			{
+				if (previous1 != message[0] || previous2 != message[1] || previous3 != message[2])
+				{
+					mVersionPopup = false;
+					ActivatePopup(message[0], message[1], message[2]);
+					PlayerPrefs.SetString("message1", message[0]);
+					PlayerPrefs.SetString("message2", message[1]);
+					PlayerPrefs.SetString("message3", message[2]);
+				}
+			}
+		}
+	}
+
+	private void ActivatePopup(string header, string subtext, string buttonText)
+	{
+		// set texts
+		UILabel label = Popup.transform.FindChild("Label").GetComponent<UILabel>();
+		label.text = header;
+		label = Popup.transform.FindChild("LabelSubtext").GetComponent<UILabel>();
+		label.text = subtext;
+		label = Popup.transform.FindChild("Button").FindChild("Label").GetComponent<UILabel>();
+		label.text = buttonText;
+		// activate
+		Popup.SetActive(true);
 	}
 }

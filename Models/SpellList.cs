@@ -10,6 +10,7 @@ public class SpellList : MonoBehaviour
 	private const string cFilename = "/list.data";
 	private string mPath;
 	private string mVersion;
+	private List<string> mMessage;
 	private List<Spell> mSpellList = new List<Spell>();
 	
 	public List<Spell> spellList
@@ -19,6 +20,10 @@ public class SpellList : MonoBehaviour
 	public string version
 	{
 		get { return mVersion; }
+	}
+	public List<string> message
+	{
+		get { return mMessage; }
 	}
 
 	public List<Spell> GetSpellsOfClassAndRank(CharClassEnum cclass, int rank)
@@ -137,7 +142,15 @@ public class SpellList : MonoBehaviour
 		{
 			mVersion = obj.GetString("version");
 		}
-
+		if (obj.ContainsKey("message"))
+		{
+			mMessage = new List<string>();
+			JSONArray jsonMessage = obj.GetArray("message");
+			foreach (var val in jsonMessage)
+			{
+				mMessage.Add(val.Str);
+			}
+		}
 		JSONArray spells = obj.GetArray("spells");
 		foreach (var val in spells)
 		{
