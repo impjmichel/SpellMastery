@@ -42,7 +42,7 @@ public class CharCreate : SpellBookPage
 		else if (labelText.StartsWith(">"))
 		{
 			// wizard spec
-			WizardSpecHandler(labelText.Substring(2));
+			WizardSpecHandler(labelText.Substring(1).Trim());
 		}
 		else if (labelText.StartsWith("1:"))
 		{
@@ -64,7 +64,7 @@ public class CharCreate : SpellBookPage
 			else
 			{
 				// class
-				ClassHandler(labelText);
+				ClassHandler(labelText.Trim());
 			}
 		}
 	}

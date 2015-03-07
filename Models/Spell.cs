@@ -132,7 +132,7 @@ public class Spell : IComparable<Spell>
 
 	public string ToShortString()
 	{
-		string result = "(" + mSchool.ToString().Substring(0,3) + ") ";
+		string result = "(" + mSchool.ToString().Substring(0,3).ToLower() + ") ";
 		result += mName;
 		return result;
 	}

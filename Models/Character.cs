@@ -308,12 +308,12 @@ public class Character
 		result += "\nAbility Modifier: " + mModifier;
 		if (mCClass == CharClassEnum.Wizard)
 		{
-			result += " (INT)";
+			result += " (int)";
 			result += "\nSpecialization: " + ((MagicSchool)(mAttributes[0])).ToString();
 		}
 		else
 		{
-			result += " (WIS)";
+			result += " (wis)";
 			if (mCClass == CharClassEnum.Cleric)
 			{
 				string dom1 = ((ClericDomain)(mAttributes[0])).ToString();
