@@ -24,6 +24,10 @@ public class CharacterFile
 		{
 			result += GetNumberOfSpellsPerDay_RANGER_Level(character.level, rank);
 		}
+		else if (character.cclass == CharClassEnum.Sorcerer)
+		{
+			result += GetNumberOfSpellsPerDay_SORCERER_Level(character.level, rank);
+		}
 		else if (character.cclass == CharClassEnum.Wizard)
 		{
 			result += GetNumberOfSpellsPerDay_WIZARD_Level(character.level, rank);
@@ -134,6 +138,65 @@ public class CharacterFile
 		return GetNumberOfSpellsPerDay_PALADIN_Level(level, rank);
 	}
 
+	public static int GetNumberOfSpellsPerDay_SORCERER_Level(int level, int rank)
+	{
+		if (rank == 0)
+		{
+			if (level == 1)
+			{
+				return 5;
+			}
+			else
+			{
+				return 6;
+			}
+		}
+		else if (rank == 1)
+		{
+			int result = level + 2;
+			if (result > 6)
+			{
+				return result;
+			}
+		}
+		else if (rank == 9)
+		{
+			if (level <= 17)
+			{
+				return -1;
+			}
+			else if (level == 18)
+			{
+				return 3;
+			}
+			else if (level == 19)
+			{
+				return 4;
+			}
+			else
+			{
+				return 6;
+			}
+		}
+		else
+		{
+			if (level >= rank * 2)
+			{
+				int result = (rank * 2) - level + 3;
+				if (result > 6)
+				{
+					result = 6;
+				}
+				return result;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		return -1;
+	}
+
 	public static int GetNumberOfSpellsPerDay_WIZARD_Level(int level, int rank)
 	{
 		if (rank > 0)
@@ -183,13 +246,13 @@ public enum CharClassEnum
 	Paladin		= 7,	// WIS modifier << implemented
 	Ranger		= 8,	// WIS modifier << implemented
 	Rogue		= 9,		// does not prepare spells
-	Sorcerer	= 10,		// does not prepare spells
+	Sorcerer	= 10,		// does not prepare spells // use as Spells known
 	Wizard		= 11	// INT modifier << implemented
 }
 
 public enum MagicSchool
 {
-	NONE = -256,
+	none = -256,
 	Abjuration = 1,
 	Conjuration = 2,
 	Divination = 3,
@@ -203,7 +266,7 @@ public enum MagicSchool
 
 public enum ClericDomain
 {
-	NONE = 0,
+	none = 0,
 	Air = 1,
 	Animal = 2,
 	Chaos = 3,

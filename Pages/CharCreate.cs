@@ -145,7 +145,7 @@ public class CharCreate : SpellBookPage
 				mCharacter.attributes[0] = (int)school;
 				break;
 			}
-			mCharacter.attributes[0] = (int)MagicSchool.NONE;
+			mCharacter.attributes[0] = (int)MagicSchool.none;
 		}
 	}
 

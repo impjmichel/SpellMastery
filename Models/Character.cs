@@ -155,7 +155,7 @@ public class Character
 
 	public string ShortInfo()
 	{
-		return mName + " [" + mCClass + "  " + mLevel + "]";
+		return mName + "\n[" + mCClass + "  " + mLevel + "]";
 	}
 
 	public bool HasExtraSpell()
@@ -163,7 +163,7 @@ public class Character
 		if (mCClass == CharClassEnum.Wizard)
 		{
 			MagicSchool spec = ((MagicSchool)(mAttributes[0]));
-			if (spec != MagicSchool.NONE)
+			if (spec != MagicSchool.none)
 			{
 				return true;
 			}
@@ -240,16 +240,14 @@ public class Character
 		if (HasExtraSpell())
 		{
 			List<KeyValuePair<Spell, bool>> readyExtra = new List<KeyValuePair<Spell, bool>>();
-			if (mCClass == CharClassEnum.Cleric)
+			for (int i = CastableRanks(); i > 0; --i)
 			{
-				readyExtra.Add(new KeyValuePair<Spell, bool>());
+				readyExtra.Add(new KeyValuePair<Spell, bool>(new Spell(), true));
 			}
-			foreach (KeyValuePair<Spell, bool> pair in mExtraSpells)
+			for (int rank = 0; rank < mExtraSpells.Count; ++rank)
 			{
-				if (pair.Key != null && !string.IsNullOrEmpty(pair.Key.name))
-				{
-					readyExtra.Add(new KeyValuePair<Spell, bool>(pair.Key, false));
-				}
+				KeyValuePair<Spell, bool> pair = mExtraSpells[rank];
+				readyExtra[rank] = new KeyValuePair<Spell, bool>(pair.Key, false);
 			}
 			mExtraSpells = readyExtra;
 		}
