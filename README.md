@@ -1,6 +1,8 @@
 # SpellMastery
 Spell preparation application for D&amp;D 3.5 using Unity 4.5 with NGUI
 
+*update* branch 'remake' will focus on the Unity 5.0 upgrade, with more features for classes etc.
+
 Version 1.1.0 has been released!
 
 Now with message / version popup.
